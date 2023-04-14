@@ -1,0 +1,45 @@
+* {
+  max-height: 100vh;
+  max-width: 100vw;
+}
+
+body {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  box-sizing: border-box;
+}
+.container {
+  height: 50vh;
+  width: 50vw;
+  background-color: aquamarine;
+}
+
+.input {
+  flex-grow: 1;
+  border-radius: 1.5rem;
+}
+.input:focus {
+  outline: none;
+}
+form {
+  background-color: blueviolet;
+  border: none;
+  padding: 0.5em;
+  position: fixed;
+  display: flex;
+}
+.knapp {
+  background-color: #333;
+  color: #fff;
+}
+.messages {
+  height: 300px;
+  list-style-type: square;
+  margin: 2em;
+  padding: 2em;
+}
+.messages li {
+  background-color: #3f3f3f;
+}
+.messages li:nth-child() {
+  background-color: #6e6e6e;
+}

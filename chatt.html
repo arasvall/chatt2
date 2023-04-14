@@ -1,0 +1,107 @@
+<!-- <form action="/chatt" method="POST">
+  <p>
+    <label>Title</label>
+    <input type="text" name="title" />
+  </p>
+  <p>
+    <label>Content</label>
+    <input type="text" name="content" />
+  </p>
+  <button type="submit">Send</button>
+</form> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" name="chatmsg" />
+      <button type="submit">Send</button>
+    </form>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"
+      integrity="sha512-AI5A3zIoeRSEEX9z3Vyir8NqSMC1pY7r5h2cE+9J6FLsoEmSSGLFaqMQw8SWvoONXogkfFrkQiJfLeHLz3+HOg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"></script>
+
+    <script>
+      var socket = io("ws://127.0.0.1:3232/");
+
+      var messages = document.getElementById("messages");
+      var form = document.getElementById("form");
+      var input = document.getElementById("input");
+
+      function getSessionUsername() {
+        let username = localStorage.getItem("username");
+        if (!username) {
+          username = prompt("Please enter your username:");
+          localStorage.setItem("username", username);
+          alert("Username saved!");
+        }
+        return username;
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (input.value) {
+          const username = getSessionUsername();
+
+          //   console.log(username);
+          socket.emit("chat message", {
+            message: input.value,
+            username: username,
+          });
+
+          fetch("http://localhost:3232/message", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              chatmsg: input.value,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((error) => console.error(error));
+          input.value = "";
+        }
+      });
+
+      socket.on("chat message", function (data) {
+        const chatMsg = data.message;
+        const username = data.username;
+        // Display the chatMsg string on the page
+        const li = document.createElement("li");
+        li.textContent = username + ": " + chatMsg;
+        messages.appendChild(li);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      fetch("http://localhost:3232/messages")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          // data contains the array of messages returned by the server
+          data.forEach((message) => {
+            const chatMsg = message.chatMsg;
+            const username = message.username;
+            // do something with each message, such as display it on the page
+            const li = document.createElement("li");
+            li.textContent = username + ": " + chatMsg;
+            messages.appendChild(li);
+          });
+        })
+        .catch((error) => console.error(error));
+    </script>
+  </body>
+</html>
