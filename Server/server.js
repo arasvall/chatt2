@@ -83,7 +83,17 @@ app.get('/', (req, res) => {
       username = msg.username
   });
 });
-
+app.post("/message", async (req, res) => {
+    const { chatMsg, username } = req.body;
+  
+    //add doc to db
+    try {
+      const messages = await Messages.save({ chatMsg, username });
+      res.status(200).json(messages);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
 
 
 app.get('/message', async (req, res) => {
